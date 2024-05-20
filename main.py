@@ -56,6 +56,30 @@ class Tile:
         self.x = col * RECT_WIDTH
         self.y = row * RECT_HEIGHT
 
+    def get_color(self):
+        color_index = int(math.log2(self.value)) - 1
+        color = self.COLORS[color_index]
+        return color
+
+    def draw(self, window):
+        color = self.get_color()
+        pg.draw.rect(window, color, (self.x, self.y, RECT_WIDTH, RECT_HEIGHT))
+
+        text = FONT.render(str(self.value), 1, FONT_COLOR)
+        window.blit(
+            text,
+            (
+                self.x + (RECT_WIDTH / 2 - text.get_width() / 2),
+                self.y + (RECT_HEIGHT / 2 - text.get_height() / 2),
+            ),
+        )
+
+    def set_poss():
+        pass
+
+    def move(self, delta):
+        pass
+
 
 ########################################################################
 # ------------------------Functions------------------------------------#
@@ -74,10 +98,36 @@ def draw_grid(window):
     pg.draw.rect(window, OUTLINE_COLOR, (0, 0, WIDTH, HEIGHT), OUTLINE_THICKNESS)
 
 
-def draw(window):
+def draw(window, tiles):
     window.fill(BACKGROUND_COLOR)
+
+    for tile in tiles.values():
+        tile.draw(window)
+
     draw_grid(window)
     pg.display.update()
+
+
+def get_random_pos(tiles):
+    row = None
+    col = None
+    while True:
+        row = random.randrange(0, ROWS)
+        col = random.randrange(0, COLS)
+
+        if f"{row}{col}" not in tiles:
+            break
+
+    return row, col
+
+
+def generate_tiles():
+    tiles = {}
+    for _ in range(2):
+        row, col = get_random_pos(tiles)
+        tiles[f"{row}{col}"] = Tile(2, row, col)
+
+    return tiles
 
 
 ########################################################################
@@ -89,6 +139,8 @@ def main(window):
     clock.tick(FPS)
     run = True
 
+    tiles = generate_tiles()
+
     while run:
         clock.tick(FPS)
 
@@ -96,7 +148,7 @@ def main(window):
             if event.type == pg.QUIT:
                 run = False
                 break
-        draw(window)
+        draw(window, tiles)
     pg.quit()
 
 
