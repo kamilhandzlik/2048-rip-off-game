@@ -136,7 +136,7 @@ def move_tiles(window, tiles, clock, direction):
     updated = True
     blocks = set()
 
-    # sorting of tiles to make sure they later merge properly
+    # Sorting of tiles to make sure they later merge properly
     if direction == "left":
         sort_func = lambda x: x.col
         reverse = False
@@ -221,11 +221,42 @@ def move_tiles(window, tiles, clock, direction):
 
 def end_move(tiles):
     if len(tiles) == 16:
+        for tile in tiles.values():
+            row, col = tile.row, tile.col
+
+            if (
+                (
+                    tiles.get(f"{row}{col+1}")
+                    and tiles[f"{row}{col+1}"].value == tile.value
+                )
+                or (
+                    tiles.get(f"{row}{col-1}")
+                    and tiles[f"{row}{col-1}"].value == tile.value
+                )
+                or (
+                    tiles.get(f"{row+1}{col}")
+                    and tiles[f"{row+1}{col}"].value == tile.value
+                )
+                or (
+                    tiles.get(f"{row-1}{col}")
+                    and tiles[f"{row-1}{col}"].value == tile.value
+                )
+            ):
+                return "continue"
+
         return "lost"
 
     row, col = get_random_pos(tiles)
     tiles[f"{row}{col}"] = Tile(random.choice([2, 4]), row, col)
-    return "Continue"
+    return "continue"
+
+
+def draw_end_screen(window):
+    window.fill(BACKGROUND_COLOR)
+    text = FONT.render("Game over", 2, FONT_COLOR)
+    window.blit(
+        text, (WIDTH / 2 - text.get_width() / 2, HEIGHT / 2 - text.get_height() / 2)
+    )
 
 
 def update_tiles(window, tiles, sorted_tiles):
@@ -255,9 +286,17 @@ def main(window):
     run = True
 
     tiles = generate_tiles()
+    game_status = "continue"
 
     while run:
         clock.tick(FPS)
+
+        if game_status == "lost":
+            draw_end_screen(window)
+            pg.display.update()
+            pg.time.wait(3000)
+            run = False
+            continue
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -275,6 +314,7 @@ def main(window):
                     move_tiles(window, tiles, clock, "down")
 
         draw(window, tiles)
+
     pg.quit()
 
 
