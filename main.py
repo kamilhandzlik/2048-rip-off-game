@@ -14,9 +14,6 @@ COLS = 4
 RECT_HEIGHT = HEIGHT // ROWS
 RECT_WIDTH = WIDTH // COLS
 
-
-FONT = pg.font.SysFont("Jacquard 12", 60, bold=True)
-
 # -------Loop-----------------
 run = True
 clock = pg.time.Clock()
@@ -26,12 +23,16 @@ OUTLINE_COLOR = (187, 173, 160)
 OUTLINE_THICKNESS = 10
 BACKGROUND_COLOR = (205, 192, 180)
 FONT_COLOR = (119, 110, 101)
-MOVE_VEL = 20
 
 
 # -------Window Settings ---------------
 WIN = pg.display.set_mode((WIDTH, HEIGHT))
 pg.display.set_caption("2048 Rip Off Game")
+
+# --------Others------------------------
+
+MOVE_VEL = 20
+FONT = pg.font.SysFont("Jacquard 12", 60, bold=True)
 
 
 ########################################################################
@@ -242,9 +243,9 @@ def end_move(tiles):
                     and tiles[f"{row-1}{col}"].value == tile.value
                 )
             ):
-                return "continue"
+                return print("continue")
 
-        return "lost"
+        return print("lost")
 
     row, col = get_random_pos(tiles)
     tiles[f"{row}{col}"] = Tile(random.choice([2, 4]), row, col)
