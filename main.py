@@ -254,14 +254,6 @@ def end_move(tiles):
     return "continue"
 
 
-def draw_end_screen(window):
-    window.fill(BACKGROUND_COLOR)
-    text = FONT.render("Game over", 2, FONT_COLOR)
-    window.blit(
-        text, (WIDTH / 2 - text.get_width() / 2, HEIGHT / 2 - text.get_height() / 2)
-    )
-
-
 def update_tiles(window, tiles, sorted_tiles):
     tiles.clear()
     for tile in sorted_tiles:
@@ -293,13 +285,6 @@ def main(window):
 
     while run:
         clock.tick(FPS)
-
-        if game_status == "lost":
-            draw_end_screen(window)
-            pg.display.update()
-            pg.time.wait(3000)
-            run = False
-            continue
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
